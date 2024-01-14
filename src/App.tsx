@@ -1,57 +1,15 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { City, CityData } from './types/index'
+import { useWeatherData } from './components/hooks/useWeatherData'
 
 const App = () => {
-  const [cities, setCities] = useState<City[]>([])
-  const [selectedCity, setSelectedCity] = useState<null | City>(null)
-  const [inputValue, setInputValue] = useState<string>('')
-  const [weatherData, setWeatherData] = useState<null | CityData>(null)
-
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    if (value) searchCity(value) //value가 없으면 실행하지 않음
-    setInputValue(value)
-  }
-
-  const searchCity = async (value: string) => {
-    try {
-      const res = await axios.get(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${value}&limit=5&lang=en&appid=${process.env.REACT_APP_API_KEY}`
-      )
-      const { data } = res
-      setCities(data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const onClickItem = (item: City) => {
-    setSelectedCity(item)
-    setInputValue(`${item.name}, ${item.country}`)
-    setCities([])
-  }
-
-  const getWeatherData = async () => {
-    try {
-      const res = await axios.get(
-        `http://api.openweathermap.org/data/2.5/forecast?lat=${
-          selectedCity!.lat
-        }&lon=${selectedCity!.lon}&units=metric&appid=${
-          process.env.REACT_APP_API_KEY
-        }`
-      )
-      const { data } = res
-      console.log('data__', data)
-      setWeatherData(data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const onSubmit = () => {
-    getWeatherData()
-  }
+  const {
+    selectedCity,
+    weatherData,
+    inputValue,
+    cities,
+    onChangeHandler,
+    onClickItem,
+    onSubmit,
+  } = useWeatherData()
 
   return (
     <main className="flex justify-center items-center bg-gradient-to-b from-pink-400 via-purple-400 to-sky-400 h-[100vh] w-full">
