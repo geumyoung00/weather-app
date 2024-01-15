@@ -36,3 +36,8 @@ export interface CityData {
     }
   ]
 }
+
+export interface ForecastType {
+  country: string
+  name: string
+}

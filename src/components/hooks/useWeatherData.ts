@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { City, CityData } from '../../types/index'
 
 export const useWeatherData = () => {
@@ -32,7 +32,7 @@ export const useWeatherData = () => {
     setCities([])
   }
 
-  const getWeatherData = async () => {
+  const getWeatherData = async (selectedCity: City) => {
     try {
       const res = await axios.get(
         `http://api.openweathermap.org/data/2.5/forecast?lat=${
@@ -42,19 +42,17 @@ export const useWeatherData = () => {
         }`
       )
       const { data } = res
-      console.log('data__', data)
       setWeatherData(data)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const onSubmit = () => {
-    getWeatherData()
+  const onSubmit = (selectedCity: City) => {
+    getWeatherData(selectedCity)
   }
 
   return {
-    selectedCity,
     weatherData,
     inputValue,
     cities,

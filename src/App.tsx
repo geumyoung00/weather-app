@@ -1,8 +1,8 @@
 import { useWeatherData } from './components/hooks/useWeatherData'
+import { Weather } from './components/Weather'
 
 const App = () => {
   const {
-    selectedCity,
     weatherData,
     inputValue,
     cities,
@@ -14,16 +14,17 @@ const App = () => {
   return (
     <main className="flex justify-center items-center bg-gradient-to-b from-pink-400 via-purple-400 to-sky-400 h-[100vh] w-full">
       {weatherData ? (
-        <section className="w-full p-4 flex flex-col text-center items-center justify-center md:px-10 lg:p-24 h-full bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg text-zinc-700">
-          <h1 className="text-4xl font-thin">
-            <span className="font-black">{`${selectedCity!.name}, ${
-              selectedCity!.country
-            }의 날씨를 찾고 있어요 🤓`}</span>
-          </h1>
-          <br />
-          <p className="text-sm mt-2">잠시만 기다려주세요!</p>
-        </section>
+        <Weather data={weatherData} />
       ) : (
+        // <section className="w-full p-4 flex flex-col text-center items-center justify-center md:px-10 lg:p-24 h-full bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg text-zinc-700">
+        //   <h1 className="text-4xl font-thin">
+        //     <span className="font-black">{`${selectedCity!.name}, ${
+        //       selectedCity!.country
+        //     }의 날씨를 찾고 있어요 🤓`}</span>
+        //   </h1>
+        //   <br />
+        //   <p className="text-sm mt-2">잠시만 기다려주세요!</p>
+        // </section>
         <section className="w-full p-4 flex flex-col text-center items-center justify-center md:px-10 lg:p-24 h-full bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg text-zinc-700">
           <h1 className="text-4xl font-thin">
             <span className="font-black">Weather App</span>
