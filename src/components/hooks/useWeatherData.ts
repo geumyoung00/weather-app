@@ -1,12 +1,12 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { City, CityData } from '../../types/index'
+import { City, ForecastType } from '../../types/index'
 
 export const useWeatherData = () => {
   const [cities, setCities] = useState<City[]>([])
   const [selectedCity, setSelectedCity] = useState<null | City>(null)
   const [inputValue, setInputValue] = useState<string>('')
-  const [weatherData, setWeatherData] = useState<null | CityData>(null)
+  const [forecastData, setForecastData] = useState<null | ForecastType>(null)
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -32,7 +32,7 @@ export const useWeatherData = () => {
     setCities([])
   }
 
-  const getWeatherData = async (selectedCity: City) => {
+  const getWeatherData = async () => {
     try {
       const res = await axios.get(
         `http://api.openweathermap.org/data/2.5/forecast?lat=${
@@ -42,18 +42,25 @@ export const useWeatherData = () => {
         }`
       )
       const { data } = res
-      setWeatherData(data)
+      const newData = {
+        ...data,
+        country: data.city.country,
+        name: data.city.name,
+        sunrise: data.city.sunrise,
+        sunset: data.city.sunset,
+      }
+      setForecastData(newData)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const onSubmit = (selectedCity: City) => {
-    getWeatherData(selectedCity)
+  const onSubmit = () => {
+    getWeatherData()
   }
 
   return {
-    weatherData,
+    forecastData,
     inputValue,
     cities,
     onChangeHandler,

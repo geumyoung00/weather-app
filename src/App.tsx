@@ -3,7 +3,7 @@ import { Weather } from './components/Weather'
 
 const App = () => {
   const {
-    weatherData,
+    forecastData,
     inputValue,
     cities,
     onChangeHandler,
@@ -13,8 +13,8 @@ const App = () => {
 
   return (
     <main className="flex justify-center items-center bg-gradient-to-b from-pink-400 via-purple-400 to-sky-400 h-[100vh] w-full">
-      {weatherData ? (
-        <Weather data={weatherData} />
+      {forecastData ? (
+        <Weather data={forecastData} />
       ) : (
         // <section className="w-full p-4 flex flex-col text-center items-center justify-center md:px-10 lg:p-24 h-full bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg text-zinc-700">
         //   <h1 className="text-4xl font-thin">

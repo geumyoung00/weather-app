@@ -5,7 +5,7 @@ export interface City {
   name: string
 }
 
-export interface CityData {
+export interface ForecastType {
   country: string
   name: string
   sunrise: number
@@ -35,9 +35,4 @@ export interface CityData {
       wind: { speed: number; deg: number; gust: number }
     }
   ]
-}
-
-export interface ForecastType {
-  country: string
-  name: string
 }
