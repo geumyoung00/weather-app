@@ -3,12 +3,18 @@ import { Degree } from './Degree'
 import { Cell } from './Cell'
 import Sunrise from './Icons/Sunrise'
 import Sunset from './Icons/Sunset'
-import { getSunTime } from '../helpers'
+import {
+  getHumidityValue,
+  getPop,
+  getSunTime,
+  getVisibilityValue,
+  getWindDirection,
+} from '../helpers'
 
 export const Weather = ({ data }: { data: ForecastType }) => {
   const lastDate = data.list.slice(-1)[0]
   const firstData = data.list.slice()[0]
-  console.log('data_?', data.sunrise)
+  console.log(data)
 
   return (
     <div className="w-full md:max-w-[500px] py-4 md:py-4 md:px-10 lg:px-24 h-full lg:h-auto bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg">
@@ -20,7 +26,7 @@ export const Weather = ({ data }: { data: ForecastType }) => {
           </h2>
           <h1 className="text-4xl font-extrabold">
             {/* <Degree />를 사용해서 날씨 배열(list)의 가장 최근 기온을 반내림해서 보여주기 */}
-            <Degree temp={Math.round(firstData.main.temp)} />
+            <Degree temp={Math.floor(firstData.main.temp)} />
           </h1>
           <p className="text-sm">
             {/* 날씨 배열(list) 가장 첫번째의 weather 안의 main의 텍스트 가져오기 */}
@@ -30,10 +36,10 @@ export const Weather = ({ data }: { data: ForecastType }) => {
           </p>
           <p className="text-sm">
             {/* <Degree />를 사용해서 날씨 배열(list)의 가장 최근 & 최고 온도를 반올림해서 보여주기 */}
-            H: <Degree temp={Math.round(lastDate.main.temp_max)} />
+            H: <Degree temp={Math.ceil(lastDate.main.temp_max)} />
             &ensp;
             {/* <Degree />를 사용해서 날씨 배열(list)의 가장 최근 & 최저 온도를 반올림해서 보여주기 */}
-            L: <Degree temp={Math.round(lastDate.main.temp_max)} />
+            L: <Degree temp={Math.ceil(lastDate.main.temp_max)} />
           </p>
         </section>
 
@@ -47,15 +53,13 @@ export const Weather = ({ data }: { data: ForecastType }) => {
               <p className="text-sm">
                 {/* 배열 아이템의 dt를 사용해서 시간 나타내기 */}
                 {/* 단, 첫번째 아이템은 "Now"라고 뜬다 */}
-                {idx === 0 ? 'Now' : new Date(item.dt).getHours()}
+                {idx === 0 ? 'Now' : new Date(item.dt * 1000).getHours()}
               </p>
               <img
                 // alt 값으로 아이템의 description을 사용:
-                alt={`${item.weather.map((item) => item.description)}`}
+                alt={`${item.weather[0].description}`}
                 // 배열 내의 weather 안에 있는 icon을 사용:
-                src={`http://openweathermap.org/img/wn/${item.weather.map(
-                  (item) => item.icon
-                )}@2x.png`}
+                src={`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
               />
               <p className="text-sm font-bold">
                 {/* <Degree />를 사용해서 item의 main.temp를 가장 가까운 정수로 보여주기 */}
@@ -81,50 +85,64 @@ export const Weather = ({ data }: { data: ForecastType }) => {
             icon="wind"
             title="Wind"
             // info 적절히 수정해 주세요:
-            info="10 km/h"
+            info={`${firstData.wind.speed} km/h`}
             // getWindDirection를 사용해 동서남북을 E, W, S 또는 N로 나타낸 후,
             // 풍속(gust) 값을 사용해 소수점 한 자리를 가진 수를 보여줍니다:
-            description="W, gusts 2.8 km/h"
+            description={`${getWindDirection(firstData.wind.deg)}, gusts ${
+              Math.floor(firstData.wind.gust * 10) / 10
+            } km/h`}
           />
           <Cell
             icon="feels"
             title="Feels like"
             // temp를 적절히 수정해 주세요:
-            info={<Degree temp={3} />}
+            info={<Degree temp={firstData.main.temp} />}
             // main.feels_like가 main.temp 보다 작으면 Feels colder, 크면 Feels warmer로 보이도록
-            description="Feels colder"
+            description={
+              firstData.main.feels_like < firstData.main.temp
+                ? 'Feels colder'
+                : 'Feels warmer'
+            }
           />
           <Cell
             icon="humidity"
             title="Humidity"
             // info를 적절히 수정해 주세요:
-            info="33 %"
+            info={`${firstData.main.humidity} %`}
             // getHumidityValue를 이용해 description이 보이도록 합니다:
-            description="Dry and comfortable"
+            // description="Dry and comfortable"
+            description={getHumidityValue(firstData.main.humidity)}
           />
           <Cell
             icon="pop"
             title="Precipitation"
             // pop(강수확률)값을 사용해 info를 적절히 수정해 주세요:
-            info="50%"
+            info={`${firstData.pop}%`}
             // helpers의 getPop을 사용하여 description을 받아오고, clouds.all을 %로 보여줍니다:
-            description="High probability, clouds at 75%"
+            description={`${getPop(firstData.pop)}, clouds at ${
+              firstData.clouds.all
+            }%`}
+            // description="High probability, clouds at 75%"
           />
           <Cell
             icon="pressure"
             title="Pressure"
             // main.pressure 값을 사용해 info를 적절히 수정해 주세요:
-            info="1018 hPa"
+            info={`${firstData.main.pressure.toString()} hPa`}
             // main.pressure가 1013 보다 작으면 "Lower than standard", 크면 "Higher than standard"
-            description="Higher than standard"
+            description={
+              firstData.main.pressure > 1013
+                ? 'Higher than standard'
+                : 'Lower than standard'
+            }
           />
           <Cell
             icon="visibility"
             title="Visibility"
             // visibility의 단위는 m인데 km로 보일 수 있도록 바꿔주세요:
-            info="10 km"
+            info={`${firstData.visibility / 1000} km`}
             // visibility를 인자로 하는 helpers의 getVisibilityValue를 써서 description을 받아와주세요:
-            description="very clear day"
+            description={getVisibilityValue(firstData.visibility)}
           />
         </section>
       </div>
