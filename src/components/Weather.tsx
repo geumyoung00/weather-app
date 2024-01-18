@@ -12,8 +12,8 @@ import {
 } from '../helpers'
 
 export const Weather = ({ data }: { data: ForecastType }) => {
-  const lastDate = data.list.slice(-1)[0]
-  const firstData = data.list.slice()[0]
+  const lastDate = data.list[data.list.length - 1]
+  const firstData = data.list[0]
   console.log(data)
 
   return (
@@ -85,18 +85,18 @@ export const Weather = ({ data }: { data: ForecastType }) => {
             icon="wind"
             title="Wind"
             // info 적절히 수정해 주세요:
-            info={`${firstData.wind.speed} km/h`}
+            info={`${firstData.wind.speed.toFixed(0)} km/h`}
             // getWindDirection를 사용해 동서남북을 E, W, S 또는 N로 나타낸 후,
             // 풍속(gust) 값을 사용해 소수점 한 자리를 가진 수를 보여줍니다:
-            description={`${getWindDirection(firstData.wind.deg)}, gusts ${
-              Math.floor(firstData.wind.gust * 10) / 10
-            } km/h`}
+            description={`${getWindDirection(
+              firstData.wind.deg
+            )}, gusts ${firstData.wind.gust.toFixed(1)} km/h`}
           />
           <Cell
             icon="feels"
             title="Feels like"
             // temp를 적절히 수정해 주세요:
-            info={<Degree temp={firstData.main.temp} />}
+            info={<Degree temp={firstData.main.temp.toFixed(0)} />}
             // main.feels_like가 main.temp 보다 작으면 Feels colder, 크면 Feels warmer로 보이도록
             description={
               firstData.main.feels_like < firstData.main.temp
@@ -117,7 +117,7 @@ export const Weather = ({ data }: { data: ForecastType }) => {
             icon="pop"
             title="Precipitation"
             // pop(강수확률)값을 사용해 info를 적절히 수정해 주세요:
-            info={`${firstData.pop}%`}
+            info={`${firstData.pop * 100}%`}
             // helpers의 getPop을 사용하여 description을 받아오고, clouds.all을 %로 보여줍니다:
             description={`${getPop(firstData.pop)}, clouds at ${
               firstData.clouds.all
@@ -128,13 +128,11 @@ export const Weather = ({ data }: { data: ForecastType }) => {
             icon="pressure"
             title="Pressure"
             // main.pressure 값을 사용해 info를 적절히 수정해 주세요:
-            info={`${firstData.main.pressure.toString()} hPa`}
+            info={`${firstData.main.pressure} hPa`}
             // main.pressure가 1013 보다 작으면 "Lower than standard", 크면 "Higher than standard"
-            description={
-              firstData.main.pressure > 1013
-                ? 'Higher than standard'
-                : 'Lower than standard'
-            }
+            description={`${
+              firstData.main.pressure > 1013 ? 'Higher' : 'Lower'
+            } than standard`}
           />
           <Cell
             icon="visibility"
